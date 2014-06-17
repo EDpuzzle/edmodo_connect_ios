@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Luca Prasso Edmodo. All rights reserved.
 //
 
-#import "EMBusyManager.h"
 #import "EMLoginService.h"
 #import "EMObjects.h"
 #import "EMMockDataStore.h"
@@ -164,17 +163,14 @@
 -(void) __onDataStoreConfigSuccess: (id<EMDataStore>) dataStore
 {
     [parentViewController dismissViewControllerAnimated:YES completion:nil];
-    [[EMBusyManager sharedInstance] incrementBusyCount];
     __typeof(self) __block blockSelf = self;
     [[EMObjects sharedInstance] resetFromDataStore:dataStore
                                          onSuccess:^{
                                              blockSelf->successHandler();
                                              [blockSelf __cleanUp];
-                                             [[EMBusyManager sharedInstance] decrementBusyCount];
                                          } onError:^(NSError* nse){
                                              blockSelf->errorHandler(nse);
                                              [blockSelf __cleanUp];
-                                             [[EMBusyManager sharedInstance] decrementBusyCount];
                                          }];
     
 }
