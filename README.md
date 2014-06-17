@@ -18,7 +18,7 @@ Install the framework in your XCode Project (I am not going to get into details 
 
 ## Simple usage
 Add this call to your code:
-...
+```
     [[EMLoginService sharedInstance] initiateLogin:parentViewController
                                       withClientID:MY_CLIENT_ID
                                          onSuccess:^() {
@@ -30,10 +30,17 @@ Add this call to your code:
                                            onError: ^(NSError* error) {
                                              // handle error
                                            }];
-...
+```
 
 If the success block is called, you're good to go.  
 Call [EMObject sharedInstance] to get the EMObjects instance and from there you can get info on the current user, his group memberships, etc.  
+
+## Mock accounts
+When the initiateLogin function is called, you will be presented with a choice between real and mock login.  Real login will present a webview that should lead you through a real Edmodo Connect login.  
+
+As that requires usernames, passwords, fake accounts, etc, we offer the 'Mock' version instead: a hard-wired set of fake accounts and relationships (all laid out as static data in EMMockDataStore.m).
+
+For fast debugging, particularly when you are more concerned with what you do with the data after you receive it as opposed to actually getting the data, you might find the mock accounts useful.
 
 # Caveats
 I am fairly new to the world of XCode and Objective C.  I suspect it is not up to par in several ways:
