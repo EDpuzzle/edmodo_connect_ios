@@ -12,7 +12,7 @@
 #import "EMBlockTypes.h"
 #import "EMBusyManager.h"
 #import "EMConnectDataStore.h"
-#import "EMConnectionLoginViewController.h"
+#import "EMConnectLoginViewController.h"
 #import "EMDataStore.h"
 #import "EMErrorHelper.h"
 #import "EMGroup.h"
