@@ -12,7 +12,8 @@
 
 /**
  Handles login/logout of Edmodo User, including UI/UX componments.
- Populates EMObjects
+ If user logs in properly, we configure EMObjects shared instance with 
+ authentication info.
  */
 @interface EMLoginService : NSObject<UIAlertViewDelegate>
 
@@ -20,14 +21,16 @@
 
 /**
  Clear out currently logged in user.
- Remove any cached authentication tokens.
+ Clear OMObjects of data store and all loaded data.
+ Clear stored keys in local storage (restoreLogin won't do anything).
  */
 -(void) logout;
 
 /**
  Offer widgets to login.
  Get user 'key' so we can talk to datastore as some authenticated user.
- Use that key to fill in EMObjects with the right data.
+ Use key to create an empty data store and configure OM Objects with that 
+ data store.
  
  Anywhere along the way we might get cancelled or find an error.
  */
@@ -38,17 +41,11 @@
               onError:(EMNSErrorBlock_t)errorHandler;
 
 /**
- Pull user 'key' out of local storage.
- 
- If we find it, return YES immediately.
- Try to use that key to get data from Edmodo, fill in EMObjects.
- Call back success/fail/error as appropriate.
- 
- If we don't find it, return NO.  None of the callbacks will be used.
+ Try to pull user 'key' out of local storage.
+ If present, use key to create an empty data store and configure OM Objects with that
+ data store, return YES;
  */
--(BOOL) restoreLogin:(EMVoidResultBlock_t)successHandler
-             onCancel:(EMVoidResultBlock_t)cancelHandler
-              onError:(EMNSErrorBlock_t)errorHandler;
+-(BOOL) restoreLogin;
 
 
 @end

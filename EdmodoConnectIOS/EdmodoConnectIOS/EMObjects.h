@@ -31,14 +31,19 @@ typedef void (^EMObjectsConfiguredBlock_t)();
 
 - (id)init;
 
+// When told to reset from data store, where are we pulling from?
+- (void) setDataStore:(id<EMDataStore>)dataStore;
+// Pull data from Edmodo data store, if we have one.
+// If we don't, nothing is loaded and we call success.
+// If we do, we do RPCs or whatever to fetch data, success or failure
+// is bubbled back up through handlers.
+- (void) resetFromDataStore: (EMVoidResultBlock_t)successHandler
+                   onError: (EMNSErrorBlock_t)errorHandler;
+
+
 // utility methods
 -(void) clear;
 
-// FIXME(dbanks)
-// Better error handling.
--(void) resetFromDataStore: (id<EMDataStore>) dataStore
-                 onSuccess: (EMVoidResultBlock_t)successHandler
-                   onError: (EMNSErrorBlock_t)errorHandler;
 -(void) logStatus;
 
 - (EMGroup*) getGroupByID: (NSString*) groupID;

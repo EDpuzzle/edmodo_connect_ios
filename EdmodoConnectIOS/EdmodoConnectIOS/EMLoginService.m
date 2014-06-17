@@ -23,9 +23,10 @@
 @implementation EMLoginService {
     UIViewController* parentViewController;
     NSString* _clientID;
-    EMVoidResultBlock_t successHandler;
-    EMVoidResultBlock_t cancelHandler;
-    EMNSErrorBlock_t errorHandler;
+    
+    EMVoidResultBlock_t _loginSuccessHandler;
+    EMVoidResultBlock_t _loginCancelHandler;
+    EMNSErrorBlock_t _loginErrorHandler;
 }
 
 + (id)sharedInstance
@@ -56,18 +57,12 @@
     [defaults synchronize];
 }
 
-- (BOOL) restoreLogin:(EMVoidResultBlock_t)sHandler
-             onCancel:(EMVoidResultBlock_t)cHandler
-              onError:(EMNSErrorBlock_t)eHandler
+- (BOOL) restoreLogin
 {
-    successHandler = sHandler;
-    cancelHandler = cHandler;
-    errorHandler = eHandler;
-    
     [[EMMockDataStore sharedInstance] populate];
-    id<EMDataStore> dataStore =  [self __getCachedDataStore];
+    id<EMDataStore> dataStore = [self __getCachedDataStore];
     if (dataStore) {
-        [self __onDataStoreConfigSuccess:dataStore];
+        [[EMObjects sharedInstance] setDataStore:dataStore];
         return YES;
     }
     return NO;
@@ -81,9 +76,9 @@
 {
     parentViewController = pvc;
     _clientID = clientID;
-    successHandler = sHandler;
-    cancelHandler = cHandler;
-    errorHandler = eHandler;
+    _loginSuccessHandler = sHandler;
+    _loginCancelHandler = cHandler;
+    _loginErrorHandler = eHandler;
     
     [[EMMockDataStore sharedInstance] populate];
     // FIXME(dbanks)
@@ -103,7 +98,6 @@
  */
 - (void) __offerMockLogin {
     [[EMObjects sharedInstance] clear];
-    EMMockDataStore* dataStore = [EMMockDataStore sharedInstance];
     
     __typeof(self) __block blockSelf = self;
     EMMockLoginViewController *loginVC = [[EMMockLoginViewController alloc]
@@ -111,8 +105,9 @@
                                               // Store this key.
                                               [blockSelf __storeLoginData:@(userID)
                                                                    ofType:LOGIN_TYPE_MOCK];
-                                              
+                                              EMMockDataStore* dataStore = [EMMockDataStore sharedInstance];
                                               [dataStore setCurrentUser:userID];
+                                              
                                               [blockSelf __onDataStoreConfigSuccess: dataStore];
                                           }
                                           onCancel:^() {
@@ -131,6 +126,7 @@
  */
 - (void) __offerRealLogin {
     [[EMObjects sharedInstance] clear];
+    
     __typeof(self) __block blockSelf = self;
     EMConnectLoginViewController *loginVC = [[EMConnectLoginViewController alloc]
                                              initWithClientID:_clientID
@@ -138,7 +134,6 @@
                                                  // Store this key.
                                                  [blockSelf __storeLoginData:accessToken
                                                                       ofType:LOGIN_TYPE_EDMODO];
-                                                 
                                                  // Configure the data store with this information.
                                                  EMConnectDataStore* dataStore = [EMConnectDataStore sharedInstance];
                                                  [dataStore setAccessToken:accessToken];
@@ -157,22 +152,15 @@
 
 /**
  The user has configured a data store with some key identifying himself.
- Now we can use the data store to populate our EM Objects with all the 
- people and groups we care about.
+ Ping back to user, ready to go.
  */
 -(void) __onDataStoreConfigSuccess: (id<EMDataStore>) dataStore
 {
+    [[EMObjects sharedInstance] setDataStore:dataStore];
     [parentViewController dismissViewControllerAnimated:YES completion:nil];
-    __typeof(self) __block blockSelf = self;
-    [[EMObjects sharedInstance] resetFromDataStore:dataStore
-                                         onSuccess:^{
-                                             blockSelf->successHandler();
-                                             [blockSelf __cleanUp];
-                                         } onError:^(NSError* nse){
-                                             blockSelf->errorHandler(nse);
-                                             [blockSelf __cleanUp];
-                                         }];
-    
+    [[EMObjects sharedInstance] setDataStore:dataStore];
+    _loginSuccessHandler();
+    [self __cleanUpLogin];
 }
 
 /**
@@ -182,35 +170,33 @@
 -(void) __onDataStoreConfigCancel
 {
     [parentViewController dismissViewControllerAnimated:YES completion:nil];
-    [[EMObjects sharedInstance] clear];
-    cancelHandler();
-    [self __cleanUp];
+    _loginCancelHandler();
+    [self __cleanUpLogin];
 }
 
 /**
- When trying to get a valid user id to configued the data store, we got some kind 
+ When trying to get a valid user id to configued the data store, we got some kind
  of error.  Just pass it up.
  */
 -(void) __onDataStoreConfigError:(NSError*) error
 {
     [parentViewController dismissViewControllerAnimated:YES completion:nil];
-    [[EMObjects sharedInstance] clear];
-    errorHandler(error);
-    [self __cleanUp];
+    _loginErrorHandler(error);
+    [self __cleanUpLogin];
 }
 
 
--(void) __cleanUp {
+-(void) __cleanUpLogin {
     parentViewController = nil;
     _clientID = nil;
-    successHandler = nil;
-    cancelHandler = nil;
-    errorHandler = nil;
+    _loginSuccessHandler = nil;
+    _loginCancelHandler = nil;
+    _loginErrorHandler = nil;
 }
 
 -(id<EMDataStore>) __getCachedDataStore {
     NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
-
+    
     NSString* loginType = (NSString*)[defaults objectForKey:LOGIN_TYPE_KEY];
     if (loginType == nil) {
         return nil;
@@ -238,12 +224,12 @@
 
 
 - (void) __storeLoginData:(id) credentialKey
-                  ofType:(NSString*) loginDataType
+                   ofType:(NSString*) loginDataType
 {
     NSUserDefaults *defaults =[NSUserDefaults standardUserDefaults];
     [defaults setObject:loginDataType forKey:LOGIN_TYPE_KEY];
     if ([loginDataType isEqualToString:LOGIN_TYPE_EDMODO]) {
-        [defaults setObject:credentialKey forKey:EDMODO_TOKEN_KEY];        
+        [defaults setObject:credentialKey forKey:EDMODO_TOKEN_KEY];
     } else {
         [defaults setObject:credentialKey forKey:MOCK_TOKEN_KEY];
         
@@ -264,7 +250,7 @@
 }
 
 - (void) alertViewCancel:(UIAlertView*)alertView {
-    [self __cleanUp];
+    [self __cleanUpLogin];
 }
 
 @end

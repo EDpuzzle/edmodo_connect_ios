@@ -31,7 +31,7 @@
     NSMutableDictionary* usersByUserID;
     NSMutableDictionary* offLimitsUsersByUserID;
     
-    id <EMDataStore> dataStore;
+    id <EMDataStore> _dataStore;
 }
 
 +(id)sharedInstance {
@@ -64,6 +64,10 @@
     return self;
 }
 
+- (void) setDataStore:(id<EMDataStore>)dataStore {
+    _dataStore = dataStore;
+}
+
 
 - (EMGroup*) getGroupByID: (NSString*) groupID
 {
@@ -78,7 +82,7 @@
 
 -(void) clear
 {
-    dataStore = nil;
+    _dataStore = nil;
     
     currentUser = nil;
     
@@ -112,12 +116,9 @@
             [currentUser.type  isEqual: EDMODO_USER_TYPE_STUDENT]);
 }
 
--(void) resetFromDataStore: (id <EMDataStore>)ds
-                 onSuccess: (EMVoidResultBlock_t)successHandler
+-(void) resetFromDataStore: (EMVoidResultBlock_t)successHandler
                    onError: (EMNSErrorBlock_t)errorHandler
 {
-    dataStore = ds;
-    
     currentUser = nil;
     
     [studentUserIDs removeAllObjects];
@@ -133,7 +134,7 @@
     [memberGroupIDs removeAllObjects];
     [memberGroups removeAllObjects];
     
-    if (dataStore == nil) {
+    if (_dataStore == nil) {
         // We refreshed, there's no data store so we're empty.
         successHandler();
     }
@@ -151,7 +152,7 @@
                  onError:(EMNSErrorBlock_t)errorHandler
 {
     __typeof(self) __block blockSelf = self;
-    [dataStore getCurrentUser:^(NSDictionary* userDictionary) {
+    [_dataStore getCurrentUser:^(NSDictionary* userDictionary) {
         blockSelf->currentUser = [[EMUser alloc] initFromOneAPIJson:userDictionary];
         NSString* key = blockSelf->currentUser.userID;
         [blockSelf->usersByUserID setObject:blockSelf->currentUser
@@ -167,7 +168,7 @@
 {
     // Get all his groups.
     __typeof(self) __block blockSelf = self;
-    [dataStore getGroupsForCurrentUser:^(NSArray* groupsArray) {
+    [_dataStore getGroupsForCurrentUser:^(NSArray* groupsArray) {
         NSString* currentUserID = blockSelf->currentUser.userID;
         
         NSDictionary* groupJson;
@@ -238,7 +239,7 @@
     
     // Get members of all owned groups.
     for (EMGroup* group in ownedGroups) {
-        [dataStore getGroupMemberships:[group.groupID integerValue]
+        [_dataStore getGroupMemberships:[group.groupID integerValue]
                              onSuccess:^(NSArray *memberships) {
                                  // These are members of groups I own.
                                  totalCount -= 1;
@@ -257,7 +258,7 @@
     
     // Get members of all member groups.
     for (EMGroup* group in memberGroups) {
-        [dataStore getGroupMemberships:[group.groupID integerValue]
+        [_dataStore getGroupMemberships:[group.groupID integerValue]
                              onSuccess:^(NSArray *memberships) {
                                  // These are members of groups I am in.
                                  totalCount -= 1;
@@ -296,7 +297,7 @@
     }
     
     __typeof(self) __block blockSelf = self;
-    [dataStore getUser:[userID integerValue]
+    [_dataStore getUser:[userID integerValue]
              onSuccess:^(NSDictionary* userDictionary) {
                  EMUser* user = [[EMUser alloc] initFromOneAPIJson:userDictionary];
                  [blockSelf->usersByUserID setObject:user
