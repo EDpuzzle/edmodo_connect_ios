@@ -9,15 +9,17 @@
 #ifndef EdmodoConnectIOS_Header_h
 #define EdmodoConnectIOS_Header_h
 
+// What the hell?
+
 #import "EMBlockTypes.h"
 #import "EMConnectDataStore.h"
-#import "EMConnectLoginViewController.h"
+#import "EMConnectLoginView.h"
 #import "EMDataStore.h"
 #import "EMErrorHelper.h"
 #import "EMGroup.h"
 #import "EMLoginService.h"
 #import "EMMockDataStore.h"
-#import "EMMockLoginViewController.h"
+#import "EMMockLoginView.h"
 #import "EMObjects.h"
 #import "EMUser.h"
 

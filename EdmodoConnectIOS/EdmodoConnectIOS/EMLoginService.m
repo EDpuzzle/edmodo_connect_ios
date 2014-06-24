@@ -10,8 +10,8 @@
 #import "EMObjects.h"
 #import "EMMockDataStore.h"
 #import "EMConnectDataStore.h"
-#import "EMMockLoginViewController.h"
-#import "EMConnectLoginViewController.h"
+#import "EMMockLoginView.h"
+#import "EMConnectLoginView.h"
 
 #define LOGIN_TYPE_KEY    @"em__loginType"
 #define EDMODO_TOKEN_KEY  @"em__edmodoToken"
@@ -21,12 +21,13 @@
 #define LOGIN_TYPE_MOCK     @"LOGIN_TYPE_MOCK"
 
 @implementation EMLoginService {
-    UIViewController* parentViewController;
+    UIView* _parentView;
     NSString* _clientID;
     
     EMVoidResultBlock_t _loginSuccessHandler;
     EMVoidResultBlock_t _loginCancelHandler;
     EMNSErrorBlock_t _loginErrorHandler;
+    UIView* _loginView;
 }
 
 + (id)sharedInstance
@@ -68,13 +69,13 @@
     return NO;
 }
 
--(void) initiateLogin:(UIViewController*)pvc
-         withClientID:(NSString*)clientID
-            onSuccess:(EMVoidResultBlock_t)sHandler
-             onCancel:(EMVoidResultBlock_t)cHandler
-              onError:(EMNSErrorBlock_t)eHandler
+-(void) initiateLoginInParentView:(UIView*)parentView
+                     withClientID:(NSString*)clientID
+                        onSuccess:(EMVoidResultBlock_t)sHandler
+                         onCancel:(EMVoidResultBlock_t)cHandler
+                          onError:(EMNSErrorBlock_t)eHandler
 {
-    parentViewController = pvc;
+    _parentView = parentView;
     _clientID = clientID;
     _loginSuccessHandler = sHandler;
     _loginCancelHandler = cHandler;
@@ -100,23 +101,25 @@
     [[EMObjects sharedInstance] clear];
     
     __typeof(self) __block blockSelf = self;
-    EMMockLoginViewController *loginVC = [[EMMockLoginViewController alloc]
-                                          init:^(NSInteger userID) {
-                                              // Store this key.
-                                              [blockSelf __storeLoginData:@(userID)
-                                                                   ofType:LOGIN_TYPE_MOCK];
-                                              EMMockDataStore* dataStore = [EMMockDataStore sharedInstance];
-                                              [dataStore setCurrentUser:userID];
-                                              
-                                              [blockSelf __onDataStoreConfigSuccess: dataStore];
-                                          }
-                                          onCancel:^() {
-                                              [blockSelf __onDataStoreConfigCancel];
-                                          }
-                                          onError:^(NSError* error) {
-                                              [blockSelf __onDataStoreConfigError:error];
-                                          }];
-    [parentViewController presentViewController:loginVC animated:YES completion:nil];
+    _loginView = [[EMMockLoginView alloc]
+                  initWithFrame:CGRectMake(0, 0, _parentView.frame.size.width,
+                                           _parentView.frame.size.height)
+                  onSuccess:^(NSInteger userID) {
+                      // Store this key.
+                      [blockSelf __storeLoginData:@(userID)
+                                           ofType:LOGIN_TYPE_MOCK];
+                      EMMockDataStore* dataStore = [EMMockDataStore sharedInstance];
+                      [dataStore setCurrentUser:userID];
+                      
+                      [blockSelf __onDataStoreConfigSuccess: dataStore];
+                  }
+                  onCancel:^() {
+                      [blockSelf __onDataStoreConfigCancel];
+                  }
+                  onError:^(NSError* error) {
+                      [blockSelf __onDataStoreConfigError:error];
+                  }];
+    [_parentView addSubview: _loginView];
 }
 
 /**
@@ -128,26 +131,28 @@
     [[EMObjects sharedInstance] clear];
     
     __typeof(self) __block blockSelf = self;
-    EMConnectLoginViewController *loginVC = [[EMConnectLoginViewController alloc]
-                                             initWithClientID:_clientID
-                                             onSuccess:^(NSString* accessToken) {
-                                                 // Store this key.
-                                                 [blockSelf __storeLoginData:accessToken
-                                                                      ofType:LOGIN_TYPE_EDMODO];
-                                                 // Configure the data store with this information.
-                                                 EMConnectDataStore* dataStore = [EMConnectDataStore sharedInstance];
-                                                 [dataStore setAccessToken:accessToken];
-                                                 
-                                                 [blockSelf __onDataStoreConfigSuccess: dataStore];
-                                             }
-                                             onCancel:^() {
-                                                 [blockSelf __onDataStoreConfigCancel];
-                                             }
-                                             onError:^(NSError* error) {
-                                                 [blockSelf __onDataStoreConfigError:error];
-                                             }];
+    _loginView = [[EMConnectLoginView alloc]
+                  initWithFrame:CGRectMake(0, 0, _parentView.frame.size.width,
+                                           _parentView.frame.size.height)
+                  withClientID:_clientID
+                  onSuccess:^(NSString* accessToken) {
+                      // Store this key.
+                      [blockSelf __storeLoginData:accessToken
+                                           ofType:LOGIN_TYPE_EDMODO];
+                      // Configure the data store with this information.
+                      EMConnectDataStore* dataStore = [EMConnectDataStore sharedInstance];
+                      [dataStore setAccessToken:accessToken];
+                      
+                      [blockSelf __onDataStoreConfigSuccess: dataStore];
+                  }
+                  onCancel:^() {
+                      [blockSelf __onDataStoreConfigCancel];
+                  }
+                  onError:^(NSError* error) {
+                      [blockSelf __onDataStoreConfigError:error];
+                  }];
     
-    [parentViewController presentViewController:loginVC animated:YES completion:nil];
+    [_parentView addSubview: _loginView];
 }
 
 /**
@@ -157,7 +162,7 @@
 -(void) __onDataStoreConfigSuccess: (id<EMDataStore>) dataStore
 {
     [[EMObjects sharedInstance] setDataStore:dataStore];
-    [parentViewController dismissViewControllerAnimated:YES completion:nil];
+    [_loginView removeFromSuperview];
     [[EMObjects sharedInstance] setDataStore:dataStore];
     _loginSuccessHandler();
     [self __cleanUpLogin];
@@ -169,7 +174,7 @@
  */
 -(void) __onDataStoreConfigCancel
 {
-    [parentViewController dismissViewControllerAnimated:YES completion:nil];
+    [_loginView removeFromSuperview];
     _loginCancelHandler();
     [self __cleanUpLogin];
 }
@@ -180,14 +185,14 @@
  */
 -(void) __onDataStoreConfigError:(NSError*) error
 {
-    [parentViewController dismissViewControllerAnimated:YES completion:nil];
+    [_loginView removeFromSuperview];
     _loginErrorHandler(error);
     [self __cleanUpLogin];
 }
 
 
 -(void) __cleanUpLogin {
-    parentViewController = nil;
+    _loginView = nil;
     _clientID = nil;
     _loginSuccessHandler = nil;
     _loginCancelHandler = nil;

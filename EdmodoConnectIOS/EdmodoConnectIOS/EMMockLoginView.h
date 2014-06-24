@@ -13,10 +13,11 @@
 // Login to mock instance of Edmodo.
 // Present user with pre-set collection of users, they select one, login
 // as that User.
-@interface EMMockLoginViewController : UIViewController
+@interface EMMockLoginView : UIView
 
-- (id)init:(EMIntegerResultBlock_t)successHandler
-  onCancel:(EMVoidResultBlock_t)cancelHandler
-   onError:(EMNSErrorBlock_t)errorHandler;
+- (id)initWithFrame:(CGRect)rect
+          onSuccess:(EMIntegerResultBlock_t)successHandler
+           onCancel:(EMVoidResultBlock_t)cancelHandler
+            onError:(EMNSErrorBlock_t)errorHandler;
 
 @end
