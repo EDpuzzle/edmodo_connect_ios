@@ -30,15 +30,17 @@
 		917CE97E194FA984004B8054 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 917CE97C194FA984004B8054 /* InfoPlist.strings */; };
 		917CE980194FA984004B8054 /* EdmodoConnectIOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE97F194FA984004B8054 /* EdmodoConnectIOSTests.m */; };
 		917CE9A5194FA9FE004B8054 /* EMConnectDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE98E194FA9FE004B8054 /* EMConnectDataStore.m */; };
-		917CE9A6194FA9FE004B8054 /* EMConnectLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE990194FA9FE004B8054 /* EMConnectLoginViewController.m */; };
 		917CE9A7194FA9FE004B8054 /* EMErrorHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE993194FA9FE004B8054 /* EMErrorHelper.m */; };
 		917CE9A9194FA9FE004B8054 /* EMGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE997194FA9FE004B8054 /* EMGroup.m */; };
 		917CE9AA194FA9FE004B8054 /* EMLoginService.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE999194FA9FE004B8054 /* EMLoginService.m */; };
 		917CE9AB194FA9FE004B8054 /* EMMockDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE99B194FA9FE004B8054 /* EMMockDataStore.m */; };
-		917CE9AC194FA9FE004B8054 /* EMMockLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE99D194FA9FE004B8054 /* EMMockLoginViewController.m */; };
 		917CE9AD194FA9FE004B8054 /* EMObjects.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE9A1194FA9FE004B8054 /* EMObjects.m */; };
 		917CE9AE194FA9FE004B8054 /* EMUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 917CE9A3194FA9FE004B8054 /* EMUser.m */; };
 		917CE9B1194FAAB5004B8054 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 917CE9B0194FAAB5004B8054 /* UIKit.framework */; };
+		9190AEE2195A404400A63A57 /* EMConnectLoginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9190AEE0195A404400A63A57 /* EMConnectLoginView.h */; };
+		9190AEE3195A404400A63A57 /* EMConnectLoginView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9190AEE1195A404400A63A57 /* EMConnectLoginView.m */; };
+		9190AEE6195A404C00A63A57 /* EMMockLoginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9190AEE4195A404C00A63A57 /* EMMockLoginView.h */; };
+		9190AEE7195A404C00A63A57 /* EMMockLoginView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9190AEE5195A404C00A63A57 /* EMMockLoginView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,8 +85,6 @@
 		917CE989194FA9FE004B8054 /* EMBlockTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMBlockTypes.h; sourceTree = "<group>"; };
 		917CE98D194FA9FE004B8054 /* EMConnectDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMConnectDataStore.h; sourceTree = "<group>"; };
 		917CE98E194FA9FE004B8054 /* EMConnectDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMConnectDataStore.m; sourceTree = "<group>"; };
-		917CE98F194FA9FE004B8054 /* EMConnectLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMConnectLoginViewController.h; sourceTree = "<group>"; };
-		917CE990194FA9FE004B8054 /* EMConnectLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMConnectLoginViewController.m; sourceTree = "<group>"; };
 		917CE991194FA9FE004B8054 /* EMDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMDataStore.h; sourceTree = "<group>"; };
 		917CE992194FA9FE004B8054 /* EMErrorHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMErrorHelper.h; sourceTree = "<group>"; };
 		917CE993194FA9FE004B8054 /* EMErrorHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMErrorHelper.m; sourceTree = "<group>"; };
@@ -94,13 +94,15 @@
 		917CE999194FA9FE004B8054 /* EMLoginService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMLoginService.m; sourceTree = "<group>"; };
 		917CE99A194FA9FE004B8054 /* EMMockDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMMockDataStore.h; sourceTree = "<group>"; };
 		917CE99B194FA9FE004B8054 /* EMMockDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMMockDataStore.m; sourceTree = "<group>"; };
-		917CE99C194FA9FE004B8054 /* EMMockLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMMockLoginViewController.h; sourceTree = "<group>"; };
-		917CE99D194FA9FE004B8054 /* EMMockLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMMockLoginViewController.m; sourceTree = "<group>"; };
 		917CE9A0194FA9FE004B8054 /* EMObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMObjects.h; sourceTree = "<group>"; };
 		917CE9A1194FA9FE004B8054 /* EMObjects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMObjects.m; sourceTree = "<group>"; };
 		917CE9A2194FA9FE004B8054 /* EMUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMUser.h; sourceTree = "<group>"; };
 		917CE9A3194FA9FE004B8054 /* EMUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMUser.m; sourceTree = "<group>"; };
 		917CE9B0194FAAB5004B8054 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		9190AEE0195A404400A63A57 /* EMConnectLoginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMConnectLoginView.h; sourceTree = "<group>"; };
+		9190AEE1195A404400A63A57 /* EMConnectLoginView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMConnectLoginView.m; sourceTree = "<group>"; };
+		9190AEE4195A404C00A63A57 /* EMMockLoginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMMockLoginView.h; sourceTree = "<group>"; };
+		9190AEE5195A404C00A63A57 /* EMMockLoginView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMMockLoginView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,23 +163,23 @@
 				91242A7E194FC3B70008B97D /* EdmodoConnectIOS.h */,
 				917CE989194FA9FE004B8054 /* EMBlockTypes.h */,
 				917CE98D194FA9FE004B8054 /* EMConnectDataStore.h */,
-				917CE98F194FA9FE004B8054 /* EMConnectLoginViewController.h */,
+				917CE98E194FA9FE004B8054 /* EMConnectDataStore.m */,
+				9190AEE0195A404400A63A57 /* EMConnectLoginView.h */,
+				9190AEE1195A404400A63A57 /* EMConnectLoginView.m */,
 				917CE991194FA9FE004B8054 /* EMDataStore.h */,
 				917CE992194FA9FE004B8054 /* EMErrorHelper.h */,
-				917CE996194FA9FE004B8054 /* EMGroup.h */,
-				917CE998194FA9FE004B8054 /* EMLoginService.h */,
-				917CE99A194FA9FE004B8054 /* EMMockDataStore.h */,
-				917CE99C194FA9FE004B8054 /* EMMockLoginViewController.h */,
-				917CE9A0194FA9FE004B8054 /* EMObjects.h */,
-				917CE9A2194FA9FE004B8054 /* EMUser.h */,
-				917CE98E194FA9FE004B8054 /* EMConnectDataStore.m */,
-				917CE990194FA9FE004B8054 /* EMConnectLoginViewController.m */,
 				917CE993194FA9FE004B8054 /* EMErrorHelper.m */,
+				917CE996194FA9FE004B8054 /* EMGroup.h */,
 				917CE997194FA9FE004B8054 /* EMGroup.m */,
+				917CE998194FA9FE004B8054 /* EMLoginService.h */,
 				917CE999194FA9FE004B8054 /* EMLoginService.m */,
+				917CE99A194FA9FE004B8054 /* EMMockDataStore.h */,
 				917CE99B194FA9FE004B8054 /* EMMockDataStore.m */,
-				917CE99D194FA9FE004B8054 /* EMMockLoginViewController.m */,
+				9190AEE4195A404C00A63A57 /* EMMockLoginView.h */,
+				9190AEE5195A404C00A63A57 /* EMMockLoginView.m */,
+				917CE9A0194FA9FE004B8054 /* EMObjects.h */,
 				917CE9A1194FA9FE004B8054 /* EMObjects.m */,
+				917CE9A2194FA9FE004B8054 /* EMUser.h */,
 				917CE9A3194FA9FE004B8054 /* EMUser.m */,
 				917CE966194FA984004B8054 /* Supporting Files */,
 			);
@@ -217,6 +219,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9190AEE6195A404C00A63A57 /* EMMockLoginView.h in Headers */,
+				9190AEE2195A404400A63A57 /* EMConnectLoginView.h in Headers */,
 				91242A80194FC4680008B97D /* EdmodoConnectIOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -334,15 +338,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				917CE9AC194FA9FE004B8054 /* EMMockLoginViewController.m in Sources */,
 				917CE9A5194FA9FE004B8054 /* EMConnectDataStore.m in Sources */,
 				917CE9A9194FA9FE004B8054 /* EMGroup.m in Sources */,
 				917CE9AD194FA9FE004B8054 /* EMObjects.m in Sources */,
-				917CE9A6194FA9FE004B8054 /* EMConnectLoginViewController.m in Sources */,
+				9190AEE7195A404C00A63A57 /* EMMockLoginView.m in Sources */,
 				917CE9AE194FA9FE004B8054 /* EMUser.m in Sources */,
 				917CE9A7194FA9FE004B8054 /* EMErrorHelper.m in Sources */,
 				917CE9AA194FA9FE004B8054 /* EMLoginService.m in Sources */,
 				917CE9AB194FA9FE004B8054 /* EMMockDataStore.m in Sources */,
+				9190AEE3195A404400A63A57 /* EMConnectLoginView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
