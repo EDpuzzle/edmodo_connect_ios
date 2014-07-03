@@ -23,6 +23,8 @@
 @implementation EMLoginService {
     UIView* _parentView;
     NSString* _clientID;
+    NSString* _redirectURI;
+    NSArray* _scopes;
     
     EMVoidResultBlock_t _loginSuccessHandler;
     EMVoidResultBlock_t _loginCancelHandler;
@@ -71,12 +73,17 @@
 
 -(void) initiateLoginInParentView:(UIView*)parentView
                      withClientID:(NSString*)clientID
+                  withRedirectURI:(NSString*)redirectURI
+                       withScopes:(NSArray*)scopes
                         onSuccess:(EMVoidResultBlock_t)sHandler
                          onCancel:(EMVoidResultBlock_t)cHandler
                           onError:(EMNSErrorBlock_t)eHandler
 {
     _parentView = parentView;
     _clientID = clientID;
+    _redirectURI = redirectURI;
+    _scopes = scopes;
+    
     _loginSuccessHandler = sHandler;
     _loginCancelHandler = cHandler;
     _loginErrorHandler = eHandler;
@@ -131,26 +138,26 @@
     [[EMObjects sharedInstance] clear];
     
     __typeof(self) __block blockSelf = self;
-    _loginView = [[EMConnectLoginView alloc]
-                  initWithFrame:CGRectMake(0, 0, _parentView.frame.size.width,
-                                           _parentView.frame.size.height)
-                  withClientID:_clientID
-                  onSuccess:^(NSString* accessToken) {
-                      // Store this key.
-                      [blockSelf __storeLoginData:accessToken
-                                           ofType:LOGIN_TYPE_EDMODO];
-                      // Configure the data store with this information.
-                      EMConnectDataStore* dataStore = [EMConnectDataStore sharedInstance];
-                      [dataStore setAccessToken:accessToken];
-                      
-                      [blockSelf __onDataStoreConfigSuccess: dataStore];
-                  }
-                  onCancel:^() {
-                      [blockSelf __onDataStoreConfigCancel];
-                  }
-                  onError:^(NSError* error) {
-                      [blockSelf __onDataStoreConfigError:error];
-                  }];
+    _loginView = [[EMConnectLoginView alloc] initWithFrame:CGRectMake(0, 0, _parentView.frame.size.width, _parentView.frame.size.height)
+                                              withClientID:_clientID
+                                           withRedirectURI:_redirectURI
+                                                withScopes:_scopes
+                                                 onSuccess:^(NSString* accessToken) {
+                                                     // Store this key.
+                                                     [blockSelf __storeLoginData:accessToken
+                                                                          ofType:LOGIN_TYPE_EDMODO];
+                                                     // Configure the data store with this information.
+                                                     EMConnectDataStore* dataStore = [EMConnectDataStore sharedInstance];
+                                                     [dataStore setAccessToken:accessToken];
+                                                     
+                                                     [blockSelf __onDataStoreConfigSuccess: dataStore];
+                                                 }
+                                                  onCancel:^() {
+                                                      [blockSelf __onDataStoreConfigCancel];
+                                                  }
+                                                   onError:^(NSError* error) {
+                                                       [blockSelf __onDataStoreConfigError:error];
+                                                   }];
     
     [_parentView addSubview: _loginView];
 }

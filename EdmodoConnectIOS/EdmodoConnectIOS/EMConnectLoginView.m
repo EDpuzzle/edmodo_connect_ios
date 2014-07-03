@@ -6,8 +6,11 @@
 //  Copyright (c) 2013 Luca Prasso Edmodo. All rights reserved.
 //
 
+#import <CoreFoundation/CFURL.h>
+
 #import "EMObjects.h"
 #import "EMConnectDataStore.h"
+
 #import "EMConnectLoginView.h"
 
 @interface EMConnectLoginView ()
@@ -17,6 +20,8 @@
 @implementation EMConnectLoginView {
     UIWebView *_webView;
     NSString* _clientID;
+    NSString* _redirectURI;
+    NSArray* _scopes;
     EMStringResultBlock_t _successHandler;
     EMVoidResultBlock_t _cancelHandler;
     EMNSErrorBlock_t _errorHandler;
@@ -26,17 +31,20 @@ static CGFloat const EC_WebViewHeight = 450;
 static CGFloat const EC_WebViewWidth = 400;
 
 static NSString* const EDMODO_CONNECT_LOGIN_BEGINNING = @"https://api.edmodo.com/oauth/authorize?";
-static NSString* const EDMODO_CONNECT_LOGIN_MIDDLE = @"client_id=%@";
-static NSString* const EDMODO_CONNECT_LOGIN_END = @"&redirect_uri=https%3A%2F%2Fapi.edmodo.com%2Fstatus-lb&response_type=token&scope=basic%20read_groups";
+
 
 - (id)initWithFrame:(CGRect)rect
        withClientID:(NSString*)clientID
+    withRedirectURI:(NSString*)redirectURI
+         withScopes:(NSArray*)scopes
           onSuccess:(EMStringResultBlock_t)successHandler
            onCancel:(EMVoidResultBlock_t)cancelHandler
             onError:(EMNSErrorBlock_t)errorHandler {
     self = [super initWithFrame:rect];
     if (self) {
         _clientID = clientID;
+        _redirectURI = redirectURI;
+        _scopes = scopes;
         _successHandler = successHandler;
         _cancelHandler = cancelHandler;
         _errorHandler = errorHandler;
@@ -49,6 +57,36 @@ static NSString* const EDMODO_CONNECT_LOGIN_END = @"&redirect_uri=https%3A%2F%2F
 - (void) setWebViewFrame:(CGRect)rect
 {
     _webView.frame = rect;
+}
+
+- (NSString *) __urlEscapeString:(NSString*)string
+{
+    return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
+                                                                                 NULL,
+                                                                                 (__bridge CFStringRef) string,
+                                                                                 NULL,
+                                                                                 CFSTR("!*'();:@&=+$,/?%#[]\" "),
+                                                                                 kCFStringEncodingUTF8));
+}
+
+
+- (NSString*) __createUrlParamsString:(NSDictionary*)params
+{
+    NSMutableString* str = [NSMutableString stringWithString:@""];
+    
+    BOOL first = YES;
+    for (NSString *key in [params allKeys]) {
+        NSString *escapedValue = [self __urlEscapeString:[params objectForKey:key]];
+        if (!first) {
+            [str appendString:@"&"];
+        }
+        first = NO;
+        
+        [str appendString:key];
+        [str appendString:@"="];
+        [str appendString:escapedValue];
+    }
+    return [NSString stringWithString:str];
 }
 
 - (void) __createWidgets
@@ -66,10 +104,23 @@ static NSString* const EDMODO_CONNECT_LOGIN_END = @"&redirect_uri=https%3A%2F%2F
     _webView.delegate = self;
     _webView.scalesPageToFit = YES;
     
+    NSString* scopesString = [_scopes componentsJoinedByString:@" "];
     
-    // New EdmodoConnect API
-    NSString* formattedMiddle = [NSString stringWithFormat:EDMODO_CONNECT_LOGIN_MIDDLE, _clientID];
-    NSString* fullURL = [[EDMODO_CONNECT_LOGIN_BEGINNING stringByAppendingString:formattedMiddle] stringByAppendingString: EDMODO_CONNECT_LOGIN_END];
+    NSDictionary* params = [[NSDictionary alloc] initWithObjects: @[
+                                                                    _clientID,
+                                                                    @"token",
+                                                                    scopesString,
+                                                                    _redirectURI,
+                                                                    ]
+                                                         forKeys: @[
+                                                                    @"client_id",
+                                                                    @"response_type",
+                                                                    @"scope",
+                                                                    @"redirect_uri",
+                                                                    ]];
+
+    
+    NSString* fullURL = [EDMODO_CONNECT_LOGIN_BEGINNING stringByAppendingString:[self __createUrlParamsString:params]];
     NSURL *url = [NSURL URLWithString:fullURL];
     NSURLRequest *requestURL = [NSURLRequest requestWithURL:url];
     
@@ -78,19 +129,6 @@ static NSString* const EDMODO_CONNECT_LOGIN_END = @"&redirect_uri=https%3A%2F%2F
     
     // add webview to view stack
     [self addSubview:_webView];
-    
-    /*
-     // create quit button to abort login procedure
-     CGFloat buttonSide = self.bounds.size.height * 0.05;
-     UIButton *quitButton = [UIButton buttonWithType:UIButtonTypeCustom];
-     quitButton.frame = CGRectMake(0.0, 0.0, buttonSide, buttonSide);
-     quitButton.showsTouchWhenHighlighted = YES;
-     quitButton.backgroundColor = [UIColor clearColor];
-     [quitButton setBackgroundImage:[UIImage imageNamed:@"213-reply"] forState:UIControlStateNormal];
-     [quitButton addTarget:self action:@selector(quitLogin:) forControlEvents:UIControlEventTouchUpInside];
-     
-     [self addSubview:quitButton];
-     */
     
 	UITapGestureRecognizer *tapRecognizer =
     [[UITapGestureRecognizer alloc] initWithTarget:self

@@ -10,6 +10,11 @@
 #import <UIKit/UIAlertView.h>
 #import "EMDataStore.h"
 
+// Valid 'scope' values.
+#define EM_BASIC_SCOPE          @"basic"
+#define EM_READ_GROUPS_SCOPE    @"read_groups"
+
+
 /**
  Handles login/logout of Edmodo User, including UI/UX componments.
  If user logs in properly, we configure EMObjects shared instance with
@@ -36,6 +41,8 @@
  */
 -(void) initiateLoginInParentView:(UIView*)parentView
                      withClientID:(NSString*)clientID
+                  withRedirectURI:(NSString*)redirectURI
+                       withScopes:(NSArray*)scopes
                         onSuccess:(EMVoidResultBlock_t)successHandler
                          onCancel:(EMVoidResultBlock_t)cancelHandler
                           onError:(EMNSErrorBlock_t)errorHandler;
