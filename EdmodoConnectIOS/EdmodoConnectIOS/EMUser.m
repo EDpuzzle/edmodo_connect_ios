@@ -22,6 +22,7 @@
 @synthesize title = _title;
 @synthesize timeZone = _timeZone;
 @synthesize url = _url;
+@synthesize email = _email;
 
 -(id) init {
     
@@ -37,6 +38,7 @@
         _title = nil;
         _timeZone = nil;
         _url = nil;
+        _email = nil;
         _isVerified = NO;
     }
     
@@ -53,6 +55,7 @@
         self.lastName   = [jsonDict valueForKey:ONE_API_USER_LAST_NAME];
         self.title      = [jsonDict valueForKey:ONE_API_USER_TITLE];
         self.type       = [jsonDict valueForKey:ONE_API_USER_TYPE];
+        self.email      = [jsonDict valueForKey:ONE_API_EMAIL_TYPE];
         id tmpValue     = [jsonDict valueForKey:ONE_API_USER_VERIFIED_INSTITUTION_MEMBER];
         if (tmpValue) {
             _isVerified = [tmpValue boolValue];
@@ -129,6 +132,7 @@
 -(void) logUser
 {
     NSLog(@" user     [%@ %@ %@]", _title, _firstName, _lastName);
+    NSLog(@" email     [%@]", _email);
     NSLog(@" type     [%@]", _type);
     NSLog(@" id    [%li]", (long)_userID);
     NSLog(@" avatar   [%@]", _avatarURL);

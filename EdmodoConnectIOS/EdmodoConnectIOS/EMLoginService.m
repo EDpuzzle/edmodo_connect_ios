@@ -21,6 +21,7 @@
 #define LOGIN_TYPE_MOCK     @"LOGIN_TYPE_MOCK"
 
 @implementation EMLoginService {
+    int environment;
     UIView* _parentView;
     NSString* _clientID;
     NSString* _redirectURI;
@@ -43,6 +44,13 @@
     });
     
     return _sharedObject;
+}
+
+- (id)init {
+    if (self = [super init]) {
+        environment = EDMODO_PROD_ENV;
+    }
+    return self;
 }
 
 -(void) logout
@@ -71,6 +79,11 @@
     return NO;
 }
 
+-(void) setDevelopmentMode:(BOOL)isDev
+{
+    environment = isDev ? EDMODO_DEV_ENV : EDMODO_PROD_ENV;
+}
+
 -(void) initiateLoginInParentView:(UIView*)parentView
                      withClientID:(NSString*)clientID
                   withRedirectURI:(NSString*)redirectURI
@@ -89,14 +102,18 @@
     _loginErrorHandler = eHandler;
     
     [[EMMockDataStore sharedInstance] populate];
-    // FIXME(dbanks)
-    // We don't really want this log-term, we will always use real login.
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Login"
-                                                        message:@"Login with real Edmodo or mock Edmodo?"
-                                                       delegate:self
-                                              cancelButtonTitle:@"Cancel"
-                                              otherButtonTitles:@"Real", @"Mock", nil];
-    [alertView show];
+    
+    if (environment == EDMODO_DEV_ENV) {
+        UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Login"
+                                                            message:@"Login with real Edmodo or mock Edmodo?"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"Cancel"
+                                                  otherButtonTitles:@"Real", @"Mock", nil];
+        [alertView show];
+    }
+    else {
+        [self __offerRealLogin];
+    }
 }
 
 /**

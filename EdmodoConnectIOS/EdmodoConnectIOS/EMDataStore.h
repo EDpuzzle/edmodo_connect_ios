@@ -21,6 +21,7 @@
 #define ONE_API_USER_LAST_NAME          @"last_name"
 #define ONE_API_USER_TITLE             @"user_title"
 #define ONE_API_USER_TYPE             @"type"
+#define ONE_API_EMAIL_TYPE              @"email"
 #define ONE_API_USER_VERIFIED_INSTITUTION_MEMBER  @"verified_institution_member"
 #define ONE_API_MEMBERSHIP_USER @"user"
 #define ONE_API_MEMBERSHIP_GROUP @"group"

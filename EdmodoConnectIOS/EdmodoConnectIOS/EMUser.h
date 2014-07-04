@@ -25,6 +25,7 @@
 @property (nonatomic, strong) NSString *thumbURL;
 @property (nonatomic, strong) NSString *timeZone;
 @property (nonatomic, strong) NSString *url;
+@property (nonatomic, strong) NSString *email;
 
 -(id) init;
 -(id) initFromOneAPIJson: (NSDictionary*) jsonDict;
